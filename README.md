@@ -1,49 +1,56 @@
-🔐 Password Manager (Tkinter + Python)
+🔐 Password Manager (Python + Tkinter + JSON Storage)
 
-A simple GUI-based Password Manager built using Python Tkinter.
-This app allows you to:
-
-Generate strong random passwords
-Save website, email, and password entries
-Store data locally in a text file
-Automatically copy generated passwords to clipboard
-Use a clean and minimal UI
+A simple yet powerful Password Manager built using Python Tkinter, featuring password generation, secure local storage, and an intuitive UI.
+This application allows users to easily generate strong passwords, save credentials, and search stored data with ease.
 
 🚀 Features
-✔ Password Generator
-Creates strong passwords using letters, numbers, and symbols.
+✔ Strong Password Generator
 
-✔ Clipboard Support
-Generated passwords are auto-copied to your clipboard using pyperclip.
+Randomly generates secure passwords using:
+  Uppercase & lowercase letters
+  Numbers
+  Symbols
 
-✔ Save Credentials
-Stores website, email/username, and password inside passwords.txt.
+Automatically copied to clipboard using pyperclip.
 
-✔ Warning Messages
-Prevents saving when any input field is empty.
+✔ Save Login Credentials
 
-✔ Clean Tkinter UI
-Includes a logo and styled labels for a better interface.
+Stores:
+  Website
+  Email/Username
+  Password
+
+All saved securely inside a passwords.json file using a structured dictionary format.
+
+✔ Search Function
+
+Quickly find saved credentials by entering a website name and retrieving:
+  Email
+  Password
+  Instantly displayed using popup messages.
+
+✔ Clean, Modern Tkinter UI
+
+Includes:
+
+  Custom color theme
+  Styled labels & buttons
+  Embedded logo
+  Smooth form layout
 
 🛠 Technologies Used
 
 Python 3
-Tkinter (UI)
-pyperclip (clipboard copy)
-Random module (password generation)
+
+Tkinter – GUI framework
+json – local database storage
+pyperclip – clipboard copy
+random – password generation
 
 ▶️ How to Run
+1. Install dependency:
+  pip install pyperclip
 
-Install required packages:
-pip install pyperclip
-
-
-Keep main.py and logo.png in the same directory.
-Run the app:
-python main.py
-
-
-
-
-
-
+2. Make sure main.py and logo.png are in the same folder.
+3. Run the application:
+  python main.py
