@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
 
 def password_generator():
     import random
@@ -35,69 +36,99 @@ def password_generator():
     pyperclip.copy(password)
 
 def save_data():
-    web = website_entry.get()
+    web = website_entry.get().capitalize()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {
+        web : {
+            "email": email,
+            "password": password
+        }
+    }
     if len(web) == 0 or len(email) == 0 or len(password) == 0:
         messagebox.showinfo(title="Warning", message="Dont leave any box empty")
     else:
         is_ok = messagebox.askokcancel(title=web, message="Do you want to save?\n")
         if is_ok:
-            with open("passwords.txt", mode="a") as file:
-                file.write(f"{web} | {email} | {password}\n")
-            website_entry.delete(0, END)
-            email_entry.delete(0, END)
-            password_entry.delete(0, END)
-            email_entry.insert(0, "tenathdilusha@gmail.com")
+            try:
+                with open("passwords.json", "r") as file:
+                    data = json.load(file)
+            except FileNotFoundError:
+                with open("passwords.json", "w") as file:
+                    json.dump(new_data, file, indent=4)
+            else:
+                data.update(new_data)
+                with open("passwords.json", "w") as file:
+                    json.dump(data, file, indent=4)
+            finally:
+                website_entry.delete(0, END)
+                email_entry.delete(0, END)
+                password_entry.delete(0, END)
+                email_entry.insert(0, "@gmail.com")
+
+def search_data():
+    web_name = website_entry.get().capitalize()
+    try:
+        with open("passwords.json", mode="r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.askokcancel(title=web_name, message="No data")
+    else:
+        try:
+            email = data[web_name]["email"]
+            password = data[web_name]["password"]
+        except KeyError:
+            messagebox.askokcancel(title=web_name, message="No data")
+        else:
+            messagebox.askokcancel(title=web_name, message=f"email: {email}\n password: {password}")
+
 
 window = Tk()
 window.title("Password Manager")
-window.config(padx=40, pady=40, bg="black")
+window.config(padx=50, pady=50, bg="#2C3E50")
 window.focus()
 
-canvas = Canvas(width=200, height=200, bg="black", highlightthickness=0)
+canvas = Canvas(width=200, height=200, bg="#2C3E50", highlightthickness=0)
 logo = PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=logo)
-canvas.grid(column=1, row=0)
+canvas.grid(column=0, row=0, columnspan=3, pady=(0, 20))
 
-label_1 = Label(text="Website:", font=("Arial", 12, "bold"), bg="black", fg="white")
-label_1.grid(column=0, row=1, sticky="e", pady=5)
+label_1 = Label(text="Website:", font=("Arial", 11, "bold"), bg="#2C3E50", fg="#ECF0F1")
+label_1.grid(column=0, row=1, sticky="w", pady=8, padx=(0, 10))
 
-label_2 = Label(text="Email/Username:", font=("Arial", 12, "bold"), bg="black", fg="white")
-label_2.grid(column=0, row=2, sticky="e", pady=5)
+label_2 = Label(text="Email/Username:", font=("Arial", 11, "bold"), bg="#2C3E50", fg="#ECF0F1")
+label_2.grid(column=0, row=2, sticky="w", pady=8, padx=(0, 10))
 
-label_3 = Label(text="Password:", font=("Arial", 12, "bold"), bg="black", fg="white")
-label_3.grid(column=0, row=3, sticky="e", pady=5)
+label_3 = Label(text="Password:", font=("Arial", 11, "bold"), bg="#2C3E50", fg="#ECF0F1")
+label_3.grid(column=0, row=3, sticky="w", pady=8, padx=(0, 10))
 
-website_entry = Entry(width=49)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(width=35, font=("Arial", 10), bg="#ECF0F1", fg="#2C3E50", relief="flat", 
+                      borderwidth=2, highlightthickness=1, highlightbackground="#34495E", highlightcolor="#3498DB")
+website_entry.grid(column=1, row=1, sticky="ew", padx=(5, 2))
 website_entry.focus()
 
-email_entry = Entry(width=49)
-email_entry.grid(column=1, row=2, columnspan=2)
-email_entry.insert(0, "tenathdilusha@gmail.com")
-password_entry = Entry(width=30)
-password_entry.grid(column=1, row=3)
+search_btn = Button(text="Search", font=("Arial", 9, "bold"),
+                    bg="#3498DB", fg="white", activebackground="#2980B9", activeforeground="white",
+                    relief="flat", cursor="hand2", command=search_data)
+search_btn.grid(column=2, row=1, padx=(2, 0), sticky="ew")
 
-password_btn = Button(text="Generate Password", width=15, command=password_generator)
-password_btn.grid(column=2, row=3)
+email_entry = Entry(width=35, font=("Arial", 10), bg="#ECF0F1", fg="#2C3E50", relief="flat",
+                    borderwidth=2, highlightthickness=1, highlightbackground="#34495E", highlightcolor="#3498DB")
+email_entry.grid(column=1, row=2, columnspan=2, sticky="ew", padx=5)
+email_entry.insert(0, "@gmail.com")
 
-add_btn = Button(text="Add", width=42, bg="#4CAF50", fg="white", command=save_data)
-add_btn.grid(column=1, row=4, columnspan=2, pady=10)
+password_entry = Entry(width=35, font=("Arial", 10), bg="#ECF0F1", fg="#2C3E50", relief="flat",
+                       borderwidth=2, highlightthickness=1, highlightbackground="#34495E", highlightcolor="#3498DB")
+password_entry.grid(column=1, row=3, sticky="ew", padx=(5, 2))
 
+password_btn = Button(text="Generate Password", font=("Arial", 9, "bold"), 
+                      bg="#9B59B6", fg="white", activebackground="#8E44AD", activeforeground="white",
+                      relief="flat", cursor="hand2", command=password_generator)
+password_btn.grid(column=2, row=3, padx=(2, 0), sticky="ew")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+add_btn = Button(text="Add", font=("Arial", 10, "bold"), 
+                 bg="#27AE60", fg="white", activebackground="#229954", activeforeground="white",
+                 relief="flat", cursor="hand2", command=save_data)
+add_btn.grid(column=1, row=4, columnspan=2, pady=(15, 0), padx=5, sticky="ew")
 
 window.mainloop()
